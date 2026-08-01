@@ -1,0 +1,72 @@
+# Sri Vipassi Dhamma School — Android App (Capacitor project)
+
+This is a real native Android project source. It wraps the sign-up page
+(`www/index.html`) in a WebView so it installs and runs like a normal app.
+
+I could not compile the final `.apk` inside this chat environment — Android's
+build tools only download from Google's own servers (dl.google.com,
+maven.google.com, services.gradle.org), which this sandbox can't reach.
+There are two ways to get the actual `.apk` file, pick whichever suits you.
+
+---
+
+## Option A — Build it in the cloud with GitHub Actions (no install needed)
+
+This project includes a ready-made workflow
+(`.github/workflows/build-apk.yml`) that builds the `.apk` automatically
+on GitHub's own servers — you don't need Android Studio, Java, or anything
+else installed on your computer.
+
+1. Create a free account at [github.com](https://github.com) if you don't
+   have one.
+2. Create a new repository (public or private, either works) and upload
+   this entire project folder to it — either by dragging the files into
+   github.com's web upload page, or with `git push` if you're comfortable
+   with git.
+3. Go to the repository's **Actions** tab. A workflow run should start
+   automatically (or click **"Run workflow"** if it doesn't).
+4. Wait a few minutes for it to finish (green checkmark).
+5. Click into the finished run → scroll to **Artifacts** → download
+   **SriVipassiDhammaSchool-apk**. That's a zip containing the real
+   `app-debug.apk`.
+6. Transfer that `.apk` to your phone (email, Google Drive, USB) and tap
+   it to install. You'll need to allow "Install from unknown sources"
+   the first time — normal for apps not from the Play Store.
+
+## Option B — Build it yourself with Android Studio
+
+1. Install [Android Studio](https://developer.android.com/studio) (free)
+   — it installs the Android SDK and Gradle automatically — and
+   [Node.js](https://nodejs.org) (free).
+2. Unzip this project, open a terminal in it, and run:
+   ```
+   npm install
+   npx cap sync android
+   ```
+3. Open Android Studio → **Open** → select the `android` folder inside
+   this project.
+4. Let Android Studio finish syncing Gradle (first time takes a few
+   minutes — it downloads its own build tools).
+5. In the top menu: **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
+6. Android Studio shows a notification with a **"locate"** link — click
+   it to find your `.apk`
+   (`android/app/build/outputs/apk/debug/app-debug.apk`).
+7. Install it on your phone as described in Option A, step 6.
+
+---
+
+## To change the app later
+Just edit `www/index.html` (it's the same file you have from the web
+version), then repeat the sync step and rebuild — either push to GitHub
+again (Option A rebuilds automatically) or repeat Option B's steps.
+
+## App details
+- App ID: `lk.vipassidhamma.signup`
+- App name: Sri Vipassi Dhamma School
+- Icon: your school's real logo, at all launcher densities
+- Uses your live Firebase project — no local database, works the same
+  as the web page.
+- Camera permission for face capture is requested automatically by the
+  WebView the first time the person opens "Sign Up" and taps the
+  camera controls.
+

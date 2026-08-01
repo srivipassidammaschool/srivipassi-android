@@ -1,0 +1,54 @@
+name: Build iOS App (unsigned validation build)
+
+# NOTE: This produces an UNSIGNED build for validation only.
+# It CANNOT be installed on an iPhone/iPad — Apple requires every app
+# to be signed with a paid Apple Developer account ($99/year) before
+# it can run on a real device, even for personal testing.
+#
+# What this workflow IS useful for:
+#   - Confirming the iOS project builds successfully on every push
+#   - Catching iOS-specific build errors early
+#
+# What you'll need to do LATER, once you have an Apple Developer account,
+# to get a real installable/TestFlight build:
+#   1. Add your signing certificate + provisioning profile as GitHub secrets
+#   2. Update this workflow to run `xcodebuild archive` + `exportArchive`
+#      with those signing settings
+#   (Ask and this can be set up once you have the Apple account ready.)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Check out the project
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Sync Capacitor iOS project
+        run: npx cap sync ios
+
+      - name: Install CocoaPods dependencies
+        working-directory: ios/App
+        run: pod install
+
+      - name: Build (unsigned, for validation only)
+        working-directory: ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace \
+            -scheme App \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            build
